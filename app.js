@@ -537,21 +537,39 @@ async function quickAddStaff() {
     try {
         showLoading();
         
-        // Calculate position and dates
+        // Calculate position
         const position = systemState.staffData.length > 0 
             ? Math.max(...systemState.staffData.map(s => s.position || 0)) + 1
             : 1;
         
-        // Use admin-provided start date if present, otherwise next Monday
-        const adminStart = document.getElementById('adminStartDate')?.value;
-        const baseDate = adminStart ? new Date(adminStart) : getNextMonday(new Date());
-        const startDate = new Date(baseDate);
-        startDate.setDate(baseDate.getDate() + ((position - 1) * systemState.settings.leaveDuration * DAYS_IN_WEEK));
+        // Respect admin-provided start date if present
+        const adminStartValue = document.getElementById('adminStartDate')?.value;
+        let startDate;
+        if (adminStartValue) {
+            // Use exact admin-provided date (do not alter)
+            startDate = new Date(adminStartValue);
+        } else {
+            // If there are existing staff, schedule after the last staff's end (next Monday after previous end)
+            const lastStaff = systemState.staffData.length > 0
+                ? systemState.staffData.reduce((acc, s) => (!acc || (s.position || 0) > (acc.position || 0)) ? s : acc, null)
+                : null;
+            
+            if (lastStaff && (lastStaff.endDateObj || lastStaff.endDate)) {
+                const prevEnd = lastStaff.endDateObj && lastStaff.endDateObj.toDate 
+                    ? lastStaff.endDateObj.toDate() 
+                    : new Date(lastStaff.endDate || lastStaff.endDateObj);
+                startDate = getNextMonday(prevEnd);
+            } else {
+                // No previous staff — start on next Monday
+                startDate = getNextMonday(new Date());
+            }
+        }
         
+        // Compute end date using configured leave duration
         const endDate = new Date(startDate);
         endDate.setDate(startDate.getDate() + (systemState.settings.leaveDuration * DAYS_IN_WEEK) - 1);
         
-        // Determine status
+        // Determine status for the newly added staff (first position logic preserved)
         const now = new Date();
         let status = 'upcoming';
         if (position === 1) {
@@ -1260,20 +1278,30 @@ async function updateStaffList() {
         const deletePromises = staffSnapshot.docs.map(doc => doc.ref.delete());
         await Promise.all(deletePromises);
         
-        // Add new staff
         const today = new Date();
         // Use admin start date if provided, otherwise next Monday
         const adminStart = document.getElementById('adminStartDate')?.value;
-        const nextMonday = adminStart ? new Date(adminStart) : getNextMonday(today);
+        let currentStart = adminStart ? new Date(adminStart) : getNextMonday(today);
         
+        // Iterate sequentially, scheduling each staff to start on the Monday after the previous staff's end
         for (let i = 0; i < staffNames.length; i++) {
             const name = staffNames[i];
             
-            const startDate = new Date(nextMonday);
-            startDate.setDate(nextMonday.getDate() + (i * systemState.settings.leaveDuration * DAYS_IN_WEEK));
+            let startDate;
+            if (i === 0) {
+                // First staff uses currentStart directly (adminStart respected if provided)
+                startDate = new Date(currentStart);
+            } else {
+                // For subsequent staff compute next Monday after the previous end
+                // previousEnd is already set in the prior iteration
+                startDate = getNextMonday(previousEnd);
+            }
             
             const endDate = new Date(startDate);
             endDate.setDate(startDate.getDate() + (systemState.settings.leaveDuration * DAYS_IN_WEEK) - 1);
+            
+            // Preserve previousEnd for next loop iteration
+            var previousEnd = new Date(endDate);
             
             // Determine status
             const now = new Date();
