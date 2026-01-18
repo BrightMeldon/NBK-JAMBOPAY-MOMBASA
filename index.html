@@ -24,23 +24,23 @@
                     <i class="fas fa-lock"></i>
                 </div>
                 <h1 class="auth-title">Admin Authentication</h1>
-                <p class="auth-subtitle">Enter your credentials to access the administration panel. This area is restricted to authorized personnel only.</p>
+                <p class="auth-subtitle">Enter your credentials to access the administration panel</p>
             </div>
             
             <div class="auth-error" id="authError">
-                <i class="fas fa-exclamation-triangle"></i>
+                <i class="fas fa-exclamation-circle"></i>
                 <span id="errorMessage">Invalid credentials. Please try again.</span>
             </div>
             
             <div class="auth-success" id="authSuccess">
                 <i class="fas fa-check-circle"></i>
-                <span id="successMessage">Authentication successful! Redirecting...</span>
+                <span id="successMessage">Authentication successful!</span>
             </div>
             
             <form class="auth-form" id="authForm" onsubmit="event.preventDefault(); authenticateAdmin();">
                 <div class="input-group">
                     <label class="input-label" for="authEmail">
-                        <i class="fas fa-envelope"></i> Email Address
+                        <i class="fas fa-envelope"></i> Email
                     </label>
                     <input type="email" class="ios-input" id="authEmail" 
                            placeholder="admin@nbk.co.ke" 
@@ -63,26 +63,22 @@
                     </div>
                 </div>
                 
-                <div class="auth-actions">
-                    <button type="submit" class="auth-btn auth-btn-primary" id="authSubmit">
-                        <i class="fas fa-sign-in-alt"></i> Authenticate & Continue
-                    </button>
-                    <button type="button" class="auth-btn auth-btn-secondary" onclick="cancelAuth()">
-                        <i class="fas fa-times"></i> Cancel
-                    </button>
-                </div>
+                <button type="submit" class="auth-btn auth-btn-primary" id="authSubmit">
+                    <i class="fas fa-sign-in-alt"></i> Authenticate
+                </button>
+                <button type="button" class="auth-btn auth-btn-secondary" onclick="cancelAuth()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
             </form>
             
             <div class="auth-footer">
-                <p><i class="fas fa-shield-alt"></i> Secure Admin Portal • NBK Jambo Pay HR System</p>
-                <p style="margin-top: 8px; font-size: 12px; opacity: 0.7;">
-                    Version 3.2.0 • All activities are logged for security purposes
-                </p>
+                <p><i class="fas fa-shield-alt"></i> Secure Portal • v3.3.0</p>
             </div>
         </div>
     </div>
 
     <!-- Loading Overlay -->
+
     <div class="loading" id="loading">
         <div class="spinner"></div>
     </div>
@@ -327,9 +323,7 @@
                 <h2 class="section-title">
                     <i class="fas fa-history"></i> Leave Timeline
                 </h2>
-                <button class="btn btn-secondary" id="exportTimeline" onclick="exportTimeline()">
-                    <i class="fas fa-download"></i> Export Timeline
-                </button>
+                
             </div>
             
             <div class="timeline-container" id="timelineContainer">
@@ -496,7 +490,7 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="system-info">
-            <span class="version-badge">v3.2.0</span>
+            <span class="version-badge">v3.3.0</span>
             <span>NBK Jambo Pay Leave Rotation System</span>
             <span class="designer-credit">
                 <i class="fas fa-code"></i> Designed by Software Engineer Pius Maina

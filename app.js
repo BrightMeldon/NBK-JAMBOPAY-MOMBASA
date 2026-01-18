@@ -1,5 +1,5 @@
 // Enhanced System Configuration
-const SYSTEM_VERSION = "3.2.0";
+const SYSTEM_VERSION = "3.3.0";
 const SYSTEM_NAME = "NBK Jambo Pay Leave Rotation";
 const DESIGNER = "Software Engineer Pius Maina";
 const LEAVE_DURATION_WEEKS = 2;
@@ -120,7 +120,7 @@ async function initApp() {
         // Hide loading
         setTimeout(() => {
             hideLoading();
-            showNotification('System Ready', 'Leave rotation system v3.2 connected to Firebase.', 'success');
+            showNotification('System Ready', 'Leave rotation system v3.3.0 connected to Firebase.', 'success');
         }, 1000);
         
     } catch (error) {
@@ -791,64 +791,111 @@ function renderStaffGrid() {
         const countdown = getCountdownText(staff);
         const isEndingSoon = countdown && countdown.includes('m left');
         
+        // Compute days left and progress for display
+        const daysLeftText = (() => {
+            if (staff.status !== 'current') return '';
+            let endDate;
+            if (staff.endDateObj && staff.endDateObj.toDate) endDate = staff.endDateObj.toDate();
+            else if (staff.endDateObj) endDate = new Date(staff.endDateObj);
+            else if (staff.endDate) endDate = new Date(staff.endDate);
+            else return '';
+            const diffDays = Math.ceil((endDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+            return diffDays > 0 ? `${diffDays} day${diffDays > 1 ? 's' : ''}` : '0 days';
+        })();
+
+        const progressPercent = (() => {
+            let startDate, endDate;
+            if (staff.startDateObj && staff.endDateObj) {
+            startDate = staff.startDateObj.toDate ? staff.startDateObj.toDate() : new Date(staff.startDateObj);
+            endDate = staff.endDateObj.toDate ? staff.endDateObj.toDate() : new Date(staff.endDateObj);
+            } else if (staff.startDate && staff.endDate) {
+            startDate = new Date(staff.startDate);
+            endDate = new Date(staff.endDate);
+            } else {
+            return 0;
+            }
+            const total = endDate.getTime() - startDate.getTime();
+            if (total <= 0) return 100;
+            const elapsed = Date.now() - startDate.getTime();
+            return Math.min(100, Math.max(0, Math.round((elapsed / total) * 100)));
+        })();
+
+        card.setAttribute('data-staff-id', staff.id || '');
         card.innerHTML = `
-            <div class="staff-header">
-                <span class="staff-badge">#${staff.position}</span>
-                <div class="staff-avatar">${getInitials(staff.name)}</div>
-                <div class="staff-info">
-                    <div class="staff-name">${staff.name}</div>
-                    <div class="staff-status status-${staff.status}">
-                        ${getStatusText(staff.status)}
-                    </div>
+            <div class="staff-header" role="group" aria-label="Staff ${staff.name}">
+            <span class="staff-badge">#${staff.position || '-'}</span>
+            <div class="staff-avatar" aria-hidden="true">${getInitials(staff.name)}</div>
+            <div class="staff-info">
+                <div class="staff-name" title="${staff.name}">${staff.name}</div>
+                <div class="staff-status status-${staff.status}" aria-live="polite">
+                ${getStatusText(staff.status)}
                 </div>
             </div>
-            
-            ${staff.email ? `
-                <div style="font-size: 14px; color: var(--ios-text-secondary);">
-                    <i class="fas fa-envelope"></i> ${staff.email}
-                </div>
-            ` : ''}
-            
+            </div>
+
             ${staff.department ? `
-                <div style="font-size: 14px; color: var(--ios-text-secondary);">
-                    <i class="fas fa-building"></i> ${staff.department}
-                </div>
-            ` : ''}
-            
-            ${countdown ? `
-                <div class="countdown-container">
-                    <div class="countdown-label">
-                        <i class="far fa-clock"></i> Leave ends in:
-                    </div>
-                    <div class="countdown-timer ${isEndingSoon ? 'ending' : ''}">
-                        ${countdown}
-                    </div>
-                </div>
-            ` : ''}
-            
-            <div class="staff-dates">
-                <div class="date-item">
-                    <span class="date-label">Start:</span>
-                    <span class="date-value">${staff.leaveStart || 'Not scheduled'}</span>
-                </div>
-                <div class="date-item">
-                    <span class="date-label">End:</span>
-                    <span class="date-value">${staff.leaveEnd || 'Not scheduled'}</span>
-                </div>
+            <div class="staff-meta" style="font-size:14px;color:var(--ios-text-secondary);">
+                <i class="fas fa-building" aria-hidden="true"></i>
+                <span class="staff-department">${staff.department}</span>
             </div>
-            
-            ${systemState.adminMode ? `
-                <div style="margin-top: 16px; display: flex; gap: 12px; justify-content: center;">
-                    <button class="btn btn-secondary" style="padding: 10px 16px; font-size: 14px;" 
-                            onclick="editStaff('${staff.id}')">
-                        <i class="fas fa-edit"></i> Edit
-                    </button>
-                    <button class="btn btn-danger" style="padding: 10px 16px; font-size: 14px;" 
-                            onclick="removeStaff('${staff.id}')">
-                        <i class="fas fa-trash"></i> Remove
-                    </button>
-                </div>
             ` : ''}
+
+            ${staff.email ? `
+            <div class="staff-meta" style="font-size:14px;color:var(--ios-text-secondary);display:flex;gap:8px;align-items:center;">
+                <a class="staff-email" href="mailto:${staff.email}" title="Email ${staff.name}">
+                <i class="fas fa-envelope" aria-hidden="true"></i> ${staff.email}
+                </a>
+                <button class="btn-icon" title="Copy email" onclick="navigator.clipboard.writeText('${staff.email}').then(()=>{showNotification('Copied','Email copied to clipboard','success')}).catch(()=>{showNotification('Error','Unable to copy email','error')})" aria-label="Copy email">
+                <i class="far fa-copy"></i>
+                </button>
+            </div>
+            ` : ''}
+
+            ${countdown ? `
+            <div class="countdown-container" aria-hidden="false">
+                <div class="countdown-label">
+                <i class="far fa-clock"></i> Leave ends in:
+                </div>
+                <div class="countdown-timer ${isEndingSoon ? 'ending' : ''}">
+                ${countdown}
+                </div>
+                ${daysLeftText ? `<div class="days-left" style="font-size:12px;color:var(--ios-text-secondary);">${daysLeftText} remaining</div>` : ''}
+            </div>
+            ` : ''}
+
+            <div class="staff-dates">
+            <div class="date-item">
+                <span class="date-label">Start:</span>
+                <span class="date-value">${staff.leaveStart || 'Not scheduled'}</span>
+            </div>
+            <div class="date-item">
+                <span class="date-label">End:</span>
+                <span class="date-value">${staff.leaveEnd || 'Not scheduled'}</span>
+            </div>
+            </div>
+
+            <div class="leave-progress" aria-hidden="true" style="margin-top:8px;">
+            <div class="progress-bar-bg" style="background:var(--ios-bg-strong);height:8px;border-radius:8px;overflow:hidden;">
+                <div class="progress-bar-fill" style="width:${progressPercent}%;height:100%;background:linear-gradient(90deg,var(--ios-green),var(--ios-primary));"></div>
+            </div>
+            <div style="font-size:12px;color:var(--ios-text-secondary);text-align:center;margin-top:6px;">
+                ${progressPercent}% completed
+            </div>
+            </div>
+
+            ${systemState.adminMode ? `
+            <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
+                <button class="btn btn-secondary" style="padding:10px 14px;font-size:14px;" onclick="editStaff('${staff.id}')" aria-label="Edit ${staff.name}">
+                <i class="fas fa-edit"></i> Edit
+                </button>
+                <button class="btn btn-warning" style="padding:10px 14px;font-size:14px;" onclick="markCurrentCompleted()" ${staff.status !== 'current' ? 'disabled' : ''} aria-label="Mark current as completed">
+                <i class="fas fa-check"></i> Complete
+                </button>
+                <button class="btn btn-danger" style="padding:10px 14px;font-size:14px;" onclick="removeStaff('${staff.id}')" aria-label="Remove ${staff.name}">
+                <i class="fas fa-trash"></i> Remove
+                </button>
+            </div>
+            ` : '' }
         `;
         
         fragment.appendChild(card);
@@ -942,7 +989,7 @@ function renderTimeline() {
     elements.timelineContainer.appendChild(fragment);
 }
 
-// Render notes
+// ...existing code...
 function renderNotes() {
     const fragment = document.createDocumentFragment();
     
@@ -967,10 +1014,10 @@ function renderNotes() {
         
         noteCard.style.borderLeftColor = borderColor;
         
-        // Format date
-        let displayDate = note.date;
+        // Format date (handle Firestore Timestamp or plain value)
+        let displayDate = note.date || '';
         if (note.createdAt) {
-            const noteDate = new Date(note.createdAt);
+            const noteDate = note.createdAt.toDate ? note.createdAt.toDate() : new Date(note.createdAt);
             displayDate = formatDateTime(noteDate);
         }
         
@@ -991,6 +1038,7 @@ function renderNotes() {
     elements.notesGrid.innerHTML = '';
     elements.notesGrid.appendChild(fragment);
 }
+// ...existing code...
 
 // Initialize real-time updates
 function initializeRealTimeUpdates() {
