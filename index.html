@@ -269,18 +269,42 @@
             
             <div class="stats-container">
                 <div class="stat-card">
+                    <div class="stat-icon" role="img" aria-label="Currently on leave" aria-hidden="false">
+                        <span class="icon-wrap" aria-hidden="true">
+                            <i class="fas fa-umbrella-beach fa-2x"></i>
+                            <i class="fas fa-plane-departure accent-icon" aria-hidden="true"></i>
+                        </span>
+                    </div>
                     <div class="stat-value" id="currentLeave">0</div>
                     <div class="stat-label">Currently on Leave</div>
                 </div>
                 <div class="stat-card">
+                    <div class="stat-icon" role="img" aria-label="Leaves completed" aria-hidden="false">
+                        <span class="icon-wrap" aria-hidden="true">
+                            <i class="fas fa-calendar-check fa-2x"></i>
+                            <i class="fas fa-check-circle accent-icon" aria-hidden="true"></i>
+                        </span>
+                    </div>
                     <div class="stat-value" id="completedLeaves">0</div>
                     <div class="stat-label">Leaves Completed</div>
                 </div>
                 <div class="stat-card">
+                    <div class="stat-icon" role="img" aria-label="Remaining staff" aria-hidden="false">
+                        <span class="icon-wrap" aria-hidden="true">
+                            <i class="fas fa-user-friends fa-2x"></i>
+                            <i class="fas fa-user-clock accent-icon" aria-hidden="true"></i>
+                        </span>
+                    </div>
                     <div class="stat-value" id="remainingStaff">0</div>
                     <div class="stat-label">Remaining Staff</div>
                 </div>
                 <div class="stat-card">
+                    <div class="stat-icon" role="img" aria-label="Next rotation" aria-hidden="false">
+                        <span class="icon-wrap" aria-hidden="true">
+                            <i class="fas fa-calendar-days fa-2x"></i>
+                            <i class="fas fa-arrow-rotate-right accent-icon" aria-hidden="true"></i>
+                        </span>
+                    </div>
                     <div class="stat-value" id="nextStart">Week 1</div>
                     <div class="stat-label">Next Rotation</div>
                 </div>
@@ -298,9 +322,7 @@
                     <i class="fas fa-users"></i> Staff Rotation Order
                 </h2>
                 <div class="controls">
-                    <button class="btn btn-primary" onclick="openAddStaffModal()" id="addStaffBtn">
-                        <i class="fas fa-user-plus"></i> Add Staff
-                    </button>
+                    
                     <button class="btn btn-secondary" onclick="refreshStaffData()">
                         <i class="fas fa-sync-alt"></i> Refresh
                     </button>
@@ -363,100 +385,122 @@
         </section>
 
         <!-- Admin Panel -->
-        <section class="admin-panel" id="adminPanel">
-            <div class="section-header">
-                <h2 class="section-title">
-                    <i class="fas fa-lock"></i> Administration Panel
+        <section class="admin-panel" id="adminPanel" aria-label="Administration Panel">
+            <div class="section-header liquid-glass" style="backdrop-filter: blur(14px) saturate(140%); background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02)); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 18px; display:flex; align-items:center; justify-content:space-between; gap:12px;">
+                <h2 class="section-title" style="display:flex; align-items:center; gap:10px; margin:0; font-weight:600;">
+                    <i class="fas fa-lock" style="opacity:0.95;"></i>
+                    <span>Administration Panel</span>
                 </h2>
-                <div class="controls">
-                    <button class="btn btn-danger" id="resetSystemBtn" onclick="resetSystem()">
+                <div class="controls" style="display:flex; gap:10px; align-items:center;">
+                    <button class="btn btn-danger glass-btn" id="resetSystemBtn" onclick="resetSystem()" style="--accent:#ff5c5c;">
                         <i class="fas fa-trash"></i> Reset System
                     </button>
 
-                    <!-- LOGOUT BUTTON -->
-                    <button class="btn btn-secondary" id="logoutBtn" style="margin-left:8px;" onclick="logoutAdmin()">
-                        <i class="fas fa-sign-out-alt"></i> Logout 
+                    <button class="btn btn-secondary glass-btn" id="logoutBtn" style="margin-left:8px;" onclick="logoutAdmin()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
                 </div>
             </div>
-            
-            <div class="admin-controls">
-                <div class="admin-card">
-                    <h3 class="admin-card-title">
-                        <i class="fas fa-cog"></i> System Settings
-                    </h3>
-                    <div class="input-group">
-                        <label class="input-label" for="leaveDuration">Leave Duration (Weeks)</label>
-                        <input type="number" class="ios-input" id="leaveDuration" value="2" min="1" max="4" onchange="updateEndDate()">
-                        <small style="display: block; color: var(--ios-text-secondary); margin-top: 4px; font-size: 13px;">Default is 2 weeks per staff member</small>
+
+            <div class="admin-controls" style="margin-top:18px; display:grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap:16px;">
+                <!-- System Settings Card (Liquid Glass) -->
+                <div class="glass-card" style="padding:16px; border-radius:14px; backdrop-filter: blur(12px) saturate(130%); background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02)); border:1px solid rgba(255,255,255,0.06);">
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+                        <h3 class="admin-card-title" style="margin:0; display:flex; align-items:center; gap:10px; font-size:16px;">
+                            <i class="fas fa-cog"></i> System Settings
+                        </h3>
+                        <span class="badge" style="background:linear-gradient(90deg, rgba(100,255,218,0.12), rgba(90,120,255,0.08)); padding:6px 10px; border-radius:999px; font-size:13px;">iOS 26 • Glass</span>
                     </div>
-                    <div class="input-group">
+
+                    <div class="input-group" style="margin-top:12px;">
+                        <label class="input-label" for="leaveDuration">Leave Duration (Weeks)</label>
+                        <input type="number" class="ios-input" id="leaveDuration" value="2" min="1" max="4" onchange="updateEndDate()" style="width:120px;">
+                    </div>
+
+                    <div class="input-group" style="margin-top:10px;">
                         <label class="input-label" for="rotationInterval">Rotation Interval</label>
                         <select class="ios-input" id="rotationInterval">
                             <option value="weekly">Weekly (Every Monday)</option>
                             <option value="biweekly">Bi-Weekly</option>
                             <option value="monthly">Monthly</option>
                         </select>
-                        <small style="display: block; color: var(--ios-text-secondary); margin-top: 4px; font-size: 13px;">How often rotations occur</small>
                     </div>
-                    <div class="input-group">
-                        <label class="input-label" for="autoAdvance">Auto Advance Rotation</label>
-                        <select class="ios-input" id="autoAdvance">
-                            <option value="true">Enabled</option>
-                            <option value="false">Disabled</option>
-                        </select>
-                        <small style="display: block; color: var(--ios-text-secondary); margin-top: 4px; font-size: 13px;">Automatically advance when leave ends</small>
+
+                    <div class="input-row" style="display:flex; gap:10px; margin-top:10px;">
+                        <div style="flex:1;">
+                            <label class="input-label" for="autoAdvance">Auto Advance</label>
+                            <select class="ios-input" id="autoAdvance">
+                                <option value="true">Enabled</option>
+                                <option value="false">Disabled</option>
+                            </select>
+                        </div>
+                        <div style="flex:1;">
+                            <label class="input-label" for="notifications">Notifications</label>
+                            <select class="ios-input" id="notifications">
+                                <option value="true">Enabled</option>
+                                <option value="false">Disabled</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="input-group">
-                        <label class="input-label" for="notifications">Notifications</label>
-                        <select class="ios-input" id="notifications">
-                            <option value="true">Enabled</option>
-                            <option value="false">Disabled</option>
-                        </select>
-                        <small style="display: block; color: var(--ios-text-secondary); margin-top: 4px; font-size: 13px;">Show system notifications</small>
+
+                    <div style="margin-top:14px; display:flex; gap:10px;">
+                        <button class="btn btn-primary" onclick="saveSettings()" style="flex:1;">
+                            <i class="fas fa-save"></i> Save Settings
+                        </button>
+                        <button class="btn btn-outline" onclick="restoreDefaultSettings()" style="flex:1;">
+                            <i class="fas fa-undo"></i> Restore Defaults
+                        </button>
                     </div>
-                    <button class="btn btn-primary" onclick="saveSettings()">
-                        <i class="fas fa-save"></i> Save Settings
-                    </button>
                 </div>
-                
-                <div class="admin-card">
-                    <h3 class="admin-card-title">
+
+                <!-- Manage Staff Card (Liquid Glass) -->
+                <div class="glass-card" style="padding:16px; border-radius:14px; backdrop-filter: blur(12px) saturate(130%); background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02)); border:1px solid rgba(255,255,255,0.06);">
+                    <h3 class="admin-card-title" style="margin:0 0 8px 0; display:flex; align-items:center; gap:10px;">
                         <i class="fas fa-user-plus"></i> Manage Staff
                     </h3>
-                    <div class="input-group">
-                        <label class="input-label" for="newStaffName">Quick Add Staff</label>
-                        <input type="text" class="ios-input" id="adminStaffName" placeholder="Enter staff name">
-                        <small style="display: block; color: var(--ios-text-secondary); margin-top: 4px; font-size: 13px;">Enter full name of staff member</small>
-                    </div>
-                    <button class="btn btn-primary" onclick="quickAddStaff()">
-                        <i class="fas fa-plus"></i> Quick Add
-                    </button>
 
-                    <!-- Added Quick Start Date -->
+                    <div class="input-group">
+                        <label class="input-label" for="adminStaffName">Quick Add Staff</label>
+                        <input type="text" class="ios-input" id="adminStaffName" placeholder="Enter staff name">
+                    </div>
+
+                    <div style="display:flex; gap:10px; margin-top:10px;">
+                        <button class="btn btn-primary" onclick="quickAddStaff()" style="flex:1;">
+                            <i class="fas fa-plus"></i> Quick Add
+                        </button>
+                        <button class="btn btn-secondary" onclick="openAddStaffModal()" style="flex:1;">
+                            <i class="fas fa-user-plus"></i> Full Add
+                        </button>
+                    </div>
+
                     <div class="input-group" style="margin-top:12px;">
                         <label class="input-label" for="adminStartDate">
                             <i class="fas fa-calendar-alt"></i> Quick Start Date
                         </label>
                         <input type="date" class="ios-input" id="adminStartDate" />
-                        <small style="display: block; color: var(--ios-text-secondary); margin-top: 4px; font-size: 13px;">
-                            Optional start date for quick adds and bulk update. Defaults to next Monday.
-                        </small>
                     </div>
-                    
-                    <div class="input-group" style="margin-top: 20px;">
+
+                    <div class="input-group" style="margin-top:12px;">
                         <label class="input-label" for="staffList">Edit Staff List</label>
-                        <textarea class="ios-input" id="staffList" rows="6" placeholder="Enter staff names, one per line" style="resize: vertical;"></textarea>
-                        <small style="display: block; color: var(--ios-text-secondary); margin-top: 4px; font-size: 13px;">One name per line. This will replace all staff.</small>
+                        <textarea class="ios-input" id="staffList" rows="5" placeholder="Enter staff names, one per line" style="resize: vertical;"></textarea>
                     </div>
-                    <button class="btn btn-secondary" onclick="updateStaffList()" style="margin-top: 10px;">
-                        <i class="fas fa-sync-alt"></i> Update Staff List
-                    </button>
+
+                    <div style="display:flex; gap:10px; margin-top:10px;">
+                        <button class="btn btn-secondary" onclick="updateStaffList()" style="flex:1;">
+                            <i class="fas fa-sync-alt"></i> Update Staff List
+                        </button>
+                        <button class="btn btn-danger" onclick="bulkRemoveStaff()" style="flex:1;">
+                            <i class="fas fa-user-slash"></i> Bulk Remove
+                        </button>
+                    </div>
                 </div>
-                
-                <div class="admin-card">
-                    <h3 class="admin-card-title">
+
+                <!-- Analytics & Export Card (Liquid Glass) -->
+                <div class="glass-card" style="padding:16px; border-radius:14px; backdrop-filter: blur(12px) saturate(130%); background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02)); border:1px solid rgba(255,255,255,0.06);">
+                    <h3 class="admin-card-title" style="margin:0 0 8px 0; display:flex; align-items:center; gap:10px;">
                         <i class="fas fa-chart-bar"></i> Analytics & Export
                     </h3>
+
                     <div class="input-group">
                         <label class="input-label" for="exportFormat">Export Data</label>
                         <select class="ios-input" id="exportFormat">
@@ -464,23 +508,27 @@
                             <option value="csv">CSV Format</option>
                             <option value="txt">Text Report</option>
                         </select>
-                        <small style="display: block; color: var(--ios-text-secondary); margin-top: 4px; font-size: 13px;">Choose export format for reports</small>
                     </div>
-                    <button class="btn btn-primary" onclick="exportData()">
-                        <i class="fas fa-download"></i> Export Data
-                    </button>
-                    
-                    <div class="input-group" style="margin-top: 20px;">
+
+                    <div style="margin-top:12px; display:flex; gap:10px;">
+                        <button class="btn btn-primary" onclick="exportData()" style="flex:1;">
+                            <i class="fas fa-download"></i> Export Data
+                        </button>
+                        <button class="btn btn-outline" onclick="viewAnalytics()" style="flex:1;">
+                            <i class="fas fa-eye"></i> View Analytics
+                        </button>
+                    </div>
+
+                    <div class="input-group" style="margin-top:14px;">
                         <label class="input-label" for="manualRotation">Manual Rotation Control</label>
-                        <div style="display: flex; gap: 12px; margin-top: 8px;">
-                            <button class="btn btn-primary" onclick="advanceRotation()" style="flex: 1;">
+                        <div style="display:flex; gap:12px; margin-top:10px;">
+                            <button class="btn btn-primary" onclick="advanceRotation()" style="flex:1;">
                                 <i class="fas fa-forward"></i> Advance Rotation
                             </button>
-                            <button class="btn btn-secondary" onclick="markCurrentCompleted()" style="flex: 1;">
+                            <button class="btn btn-secondary" onclick="markCurrentCompleted()" style="flex:1;">
                                 <i class="fas fa-check"></i> Complete Current
                             </button>
                         </div>
-                        <small style="display: block; color: var(--ios-text-secondary); margin-top: 4px; font-size: 13px;">Manually control the rotation schedule</small>
                     </div>
                 </div>
             </div>
